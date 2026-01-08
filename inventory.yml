@@ -4,5 +4,5 @@ all:
     chillo:
       ansible_host: SERVER_HOST
       ansible_user: SERVER_USER
-      ansible_private_key_file: private_key
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      ansible_private_key_file: ~/.ssh/private_key
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"

@@ -33,6 +33,8 @@ jobs:
                   eval $(ssh-agent -s)
                   echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
                   mkdir -p ~/.ssh && chmod 700 ~/.ssh
+                  echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/private_key
+                  chmod 600 ~/.ssh/private_key
                   ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
                   chmod 644 ~/.ssh/known_hosts
                   sed -i 's|SERVER_HOST|'$SERVER_HOST'|g' inventory.yml
