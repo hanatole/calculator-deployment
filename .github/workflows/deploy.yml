@@ -27,4 +27,5 @@ jobs:
                   SERVER_HOST: ${{ secrets.SERVER_HOST }}
                   SERVER_USER: ${{ secrets.SERVER_USER }}
               run: |
+                  echo "Repository: ${{ github.workflow_repository }}"
                   ls -lah
