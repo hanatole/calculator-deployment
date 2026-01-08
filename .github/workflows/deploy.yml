@@ -27,5 +27,7 @@ jobs:
                   SERVER_HOST: ${{ secrets.SERVER_HOST }}
                   SERVER_USER: ${{ secrets.SERVER_USER }}
               run: |
-                  echo "Repository: ${{ github.workflow_repository }}"
-                  ls -lah
+                  echo "Server host: ${{ env.SERVER_HOST }}"
+                  sed -i 's|SERVER_HOST|'$SERVER_HOST'|g' inventory.yml
+                  sed -i 's|SERVER_USER|'$SERVER_USER'|g' inventory.yml
+                  echo "$(< inventory.yml)"
