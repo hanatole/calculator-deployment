@@ -3,15 +3,13 @@ name: Deploy Application
 on:
     workflow_call:
         inputs:
-            DOCKER_IMAGE:
+            docker_image:
                 description: "Docker image to deploy"
                 required: true
-                default: "ahagbes/calculator-backend:latest"
                 type: string
-            SERVICE_NAME:
+            service_name:
                 description: "Service name (e.g., backend, frontend)"
                 required: true
-                default: "backend"
                 type: string
 jobs:
     Deploy:
@@ -20,5 +18,5 @@ jobs:
         steps:
             - name: Checkout repository
               run: |
-                  echo "Service Name: ${{ inputs.SERVICE_NAME }}"
-                  echo "Docker Image: ${{ inputs.DOCKER_IMAGE }}"
+                  echo "Service Name: ${{ inputs.service_name }}"
+                  echo "Docker Image: ${{ inputs.docker_image }}"
