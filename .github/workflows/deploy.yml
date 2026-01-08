@@ -17,6 +17,15 @@ jobs:
 
         steps:
             - name: Checkout repository
+              uses: actions/checkout@v6.0.1
+
+            - name: Update inventory file
+              env:
+                  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+                  SERVER_USER: ${{ secrets.SERVER_USER }}
               run: |
-                  echo "Service Name: ${{ inputs.service_name }}"
-                  echo "Docker Image: ${{ inputs.docker_image }}"
+                  sed -i 's|SERVER_HOST|'$SERVER_HOST'|g' inventory.yml
+                  sed -i 's|SERVER_USER|'$SERVER_USER'|g' inventory.yml
+
+            - name: Run Ansible Playbook
+              run: echo "$(<inventory.yml)"
