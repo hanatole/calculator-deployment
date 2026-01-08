@@ -1,0 +1,22 @@
+name: Output workflow
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.set_tag.outputs.tag }}
+    steps:
+      - name: Compute image tag
+        id: set_tag
+        run: |
+          echo "${GITHUB_SHA}"
+          echo "tag=sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy image
+        run: |
+          echo "Deploying image with tag ${{ needs.build.outputs.image_tag }}"
