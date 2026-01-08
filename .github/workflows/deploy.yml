@@ -19,7 +19,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v6.0.1
               with:
-                  repository: ${{ github.workflow_repository }}
+                  repository: hanatole/calculator-deployment
                   ref: main
 
             - name: Update inventory file
