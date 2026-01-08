@@ -32,15 +32,11 @@ jobs:
                   repository: hanatole/calculator-deployment
                   ref: main
 
-            - name: Update inventory file
-              shell: bash
-              run: |
-                  sed -i "s/SERVER_HOST/5.135.83.171/g" inventory.yml
-                  sed -i "s/SERVER_USER/student/g" inventory.yml
-
             - name: Deploy application using Ansible
               uses: dawidd6/action-ansible-playbook@v6
               with:
                   playbook: playbook.yml
-                  inventory: inventory.yml
+                  inventory: |
+                      [all]
+                      ${{ secrets.SERVER_HOST }} ansible_user=${{ secrets.SERVER_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
