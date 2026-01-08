@@ -11,6 +11,13 @@ on:
                 description: "Service name (e.g., backend, frontend)"
                 required: true
                 type: string
+        secrets:
+            SERVER_HOST:
+                description: "The server host address"
+                required: true
+            SERVER_USER:
+                description: "The server user name"
+                required: true
 jobs:
     Deploy:
         runs-on: ubuntu-24.04
@@ -23,11 +30,7 @@ jobs:
                   ref: main
 
             - name: Update inventory file
-              env:
-                  SERVER_HOST: ${{ secrets.SERVER_HOST }}
-                  SERVER_USER: ${{ secrets.SERVER_USER }}
               run: |
-                  echo "Server host: ${{ env.SERVER_HOST }}"
-                  sed -i 's|SERVER_HOST|'$SERVER_HOST'|g' inventory.yml
-                  sed -i 's|SERVER_USER|'$SERVER_USER'|g' inventory.yml
+                  sed -i "s/SERVER_HOST/${{ secrets.SERVER_HOST }}/g" inventory.yml
+                  sed -i "s/SERVER_USER/${{ secrets.SERVER_USER }}/g" inventory.yml
                   echo "$(< inventory.yml)"
