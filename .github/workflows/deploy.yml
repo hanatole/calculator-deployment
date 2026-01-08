@@ -1,0 +1,31 @@
+name: Deploy Application
+
+on:
+    workflow_dispatch:
+        inputs:
+            DOCKER_IMAGE:
+                description: "Docker image to deploy"
+                required: true
+                default: "ahagbes/calculator-backend:latest"
+            SERVICE_NAME:
+                description: "Service name (e.g., backend, frontend)"
+                required: true
+                default: "backend"
+
+jobs:
+    Deploy:
+        runs-on: ubuntu-24.04
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6.0.1
+
+            - name: Deploy with Ansible
+              run: |
+                  apt-get update && apt-get install -y openssh-client ansible
+                  eval $(ssh-agent -s)
+                  echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+                  mkdir -p ~/.ssh && chmod 700 ~/.ssh
+                  ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+                  chmod 644 ~/.ssh/known_hosts
+                  ansible-playbook -i inventory.yml playbook.yml --extra-vars "docker_image=$DOCKER_IMAGE service_name=$SERVICE_NAME"

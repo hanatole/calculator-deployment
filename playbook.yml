@@ -1,0 +1,35 @@
+---
+- name: Deployment Playbook
+  hosts: all
+  become: true
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    project_directory: "/srv/calculator"
+    network_name: traefiknetwork
+
+  pre_tasks:
+    - name: Create docker network
+      community.docker.docker_network:
+        name: "{{ network_name }}"
+        state: present
+
+    - name: Create service directory
+      ansible.builtin.file:
+        path: "{{ project_directory }}/{{service_name}}"
+        state: directory
+        mode: "0755"
+
+  tasks:
+    - name: Copy Docker Compose file to server
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/{{service_name}}-compose.yml.j2"
+        dest: "{{ project_directory }}/{{service_name}}/compose.yml"
+        mode: "0644"
+
+    - name: Run containers with Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_directory }}/{{service_name}}"
+        state: present
+        recreate: auto
+        pull: missing

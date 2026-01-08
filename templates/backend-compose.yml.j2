@@ -1,0 +1,21 @@
+services:
+  calculator-backend:
+    image: {{ docker_image }}
+    container_name: calculator-backend
+    restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.ah.imc.chillo.fr`) || Host(`ah.imc.chillo.fr`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+
+    networks:
+      - {{ network_name }}
+
+networks:
+  {{ network_name }}:
+    name: {{ network_name }}
+    external: true
