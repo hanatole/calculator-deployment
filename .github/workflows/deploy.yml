@@ -47,5 +47,4 @@ jobs:
             - name: Install Ansible and Docker dependencies
               run: |
                   python -m pip install ansible
-                  echo "Private key: $(<.ssh/private_key)"
-                  ansible-playbook -i inventory.yml playbook.yml --extra-vars "docker_image=${{ inputs.docker_image }} service_name=${{ inputs.service_name }}"
+                  echo "$(<.ssh/private_key)"
