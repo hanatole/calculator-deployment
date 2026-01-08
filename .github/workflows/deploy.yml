@@ -1,42 +1,24 @@
 name: Deploy Application
 
 on:
-    workflow_dispatch:
+    workflow_call:
         inputs:
             DOCKER_IMAGE:
                 description: "Docker image to deploy"
                 required: true
                 default: "ahagbes/calculator-backend:latest"
+                type: string
             SERVICE_NAME:
                 description: "Service name (e.g., backend, frontend)"
                 required: true
                 default: "backend"
-
+                type: string
 jobs:
     Deploy:
         runs-on: ubuntu-24.04
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6.0.1
-
-            - name: Deploy with Ansible
-              env:
-                  DOCKER_IMAGE: ${{ inputs.DOCKER_IMAGE }}
-                  SERVICE_NAME: ${{ inputs.SERVICE_NAME }}
-                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-                  SERVER_HOST: ${{ secrets.SERVER_HOST }}
-                  SERVER_USER: ${{ secrets.SERVER_USER }}
-
               run: |
-                  python -m pip install ansible
-                  eval $(ssh-agent -s)
-                  echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-                  mkdir -p ~/.ssh && chmod 700 ~/.ssh
-                  echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/private_key
-                  chmod 600 ~/.ssh/private_key
-                  ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
-                  chmod 644 ~/.ssh/known_hosts
-                  sed -i 's|SERVER_HOST|'$SERVER_HOST'|g' inventory.yml
-                  sed -i 's|SERVER_USER|'$SERVER_USER'|g' inventory.yml
-                  ansible-playbook -i inventory.yml playbook.yml --extra-vars "docker_image=$DOCKER_IMAGE service_name=$SERVICE_NAME"
+                  echo "Service Name: ${{ inputs.SERVICE_NAME }}"
+                  echo "Docker Image: ${{ inputs.DOCKER_IMAGE }}"
