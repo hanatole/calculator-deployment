@@ -37,13 +37,10 @@ jobs:
               run: |
                   sed -i "s/SERVER_HOST/5.135.83.171/g" inventory.yml
                   sed -i "s/SERVER_USER/student/g" inventory.yml
-                  eval $(ssh-agent -s)
-                  mkdir -p /home/runner/.ssh
-                  echo -e "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > /home/runner/.ssh/private_key
-                  chmod 600 /home/runner/.ssh/private_key
-                  ssh-keyscan -H "5.135.83.171" >> /home/runner/.ssh/known_hosts
-                  chmod 644 /home/runner/.ssh/known_hosts
 
             - name: Deploy application using Ansible
-              run: |
-                  ansible-playbook -i inventory.yml playbook.yml --extra-vars "docker_image=${{ inputs.docker_image }} service_name=${{ inputs.service_name }}"
+              uses: dawidd6/action-ansible-playbook@v6
+              with:
+                  playbook: playbook.yml
+                  inventory: inventory.yml
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
