@@ -1,0 +1,49 @@
+name: Deploy Application
+
+on:
+    workflow_call:
+        inputs:
+            docker_image:
+                description: "Docker image to deploy"
+                required: true
+                type: string
+            service_name:
+                description: "Service name (e.g., backend, frontend)"
+                required: true
+                type: string
+        secrets:
+            SERVER_HOST:
+                description: "The server host address"
+                required: true
+            SERVER_USER:
+                description: "The server user name"
+                required: true
+            SSH_PRIVATE_KEY:
+                description: "SSH private key for server access"
+                required: true
+jobs:
+    Deploy:
+        runs-on: ubuntu-24.04
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6.0.1
+              with:
+                  repository: hanatole/calculator-deployment
+                  ref: main
+
+            - name: Update inventory file
+              shell: bash
+              run: |
+                  sed -i "s/SERVER_HOST/5.135.83.171/g" inventory.yml
+                  sed -i "s/SERVER_USER/student/g" inventory.yml
+                  eval $(ssh-agent -s)
+                  mkdir -p /home/runner/.ssh
+                  echo -e "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > /home/runner/.ssh/private_key
+                  chmod 600 /home/runner/.ssh/private_key
+                  ssh-keyscan -H "5.135.83.171" >> /home/runner/.ssh/known_hosts
+                  chmod 644 /home/runner/.ssh/known_hosts
+
+            - name: Deploy application using Ansible
+              run: |
+                  echo "$(</home/runner/.ssh/private_key)"
