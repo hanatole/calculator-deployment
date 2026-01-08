@@ -7,13 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.set_tag.outputs.tag }}
-      release_date: ${{ steps.set_tag.outputs.release_date }}
+      release_date: ${{ steps.release_date.outputs.release_date }}
     steps:
       - name: Compute image tag
         id: set_tag
         run: |
-          echo "release_date=$(date +%d-%b-%Y)"
           echo "tag=sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+      - name: Add release date
+        id: release_date
+        run: echo "release_date=$(date +%d-%b-%Y)" >> $GITHUB_OUTPUT
   deploy:
     needs: build
     runs-on: ubuntu-latest
