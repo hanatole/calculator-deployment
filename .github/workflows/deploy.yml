@@ -46,4 +46,4 @@ jobs:
 
             - name: Deploy application using Ansible
               run: |
-                  ansible-playbook -i inventory.yml deploy.yml --extra-vars "docker_image=${{ inputs.docker_image }} service_name=${{ inputs.service_name }}"
+                  ansible-playbook -i inventory.yml playbook.yml --extra-vars "docker_image=${{ inputs.docker_image }} service_name=${{ inputs.service_name }}"
