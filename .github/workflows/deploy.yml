@@ -35,4 +35,6 @@ jobs:
                   mkdir -p ~/.ssh && chmod 700 ~/.ssh
                   ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
                   chmod 644 ~/.ssh/known_hosts
+                  sed -i 's|SERVER_HOST|'$SERVER_HOST'|g' inventory.yml
+                  sed -i 's|SERVER_USER|'$SERVER_USER'|g' inventory.yml
                   ansible-playbook -i inventory.yml playbook.yml --extra-vars "docker_image=$DOCKER_IMAGE service_name=$SERVICE_NAME"
